@@ -1,20 +1,15 @@
 /*
 ** pollserver.c -- a cheezy multiperson chat server
 */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <arpa/inet.h>
 #include <netdb.h>
-#include <poll.h>
 
 #include "reactor.h"
-
 
 // Get sockaddr, IPv4 or IPv6:
 void *get_in_addr(struct sockaddr *sa) {
@@ -83,10 +78,16 @@ int main(void) {
         fprintf(stderr, "error getting listening socket\n");
         return ERROR;
     }
+
     p_Reactor reactor = createReactor();
+    if(reactor == NULL) return ERROR;
     addFd(reactor, listener, (handler_t) accept_fun);
     startReactor(reactor);
+    printf("[+] server ready...\n");
+
     WaitFor(reactor);
 
     return 0;
 }
+
+

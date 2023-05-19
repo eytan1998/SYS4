@@ -17,7 +17,7 @@
 
 #include "HashMap.h"
 
-#define PORT "9034"   // Port we're listening on
+#define PORT "9034"   // Port we're listening on as beej
 
 typedef struct Reactor {
     pthread_t thread_id;
@@ -25,6 +25,10 @@ typedef struct Reactor {
     struct pollfd *pfds;
     int thread_active;
 } Reactor,*p_Reactor;
+
+//function to assign to fds
+void print_fun(int , p_Reactor ,int );
+void accept_fun(int , p_Reactor ,int );
 
 //create reactor, return pointer to struct of reactor
 //upon creation is not active only ds are init and alloc
@@ -45,8 +49,10 @@ void removeFd(void *this, int fd);
 //wait on pthread_join(3) until tread of reactor will finish
 void WaitFor(void * this);
 
-void print_fun(int , p_Reactor ,int );
-void accept_fun(int , p_Reactor ,int );
+//free all allocations
+void freeAll(void* this);
+
+
 #endif /* REACTOR_H */
 
 

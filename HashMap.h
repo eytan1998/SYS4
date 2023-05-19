@@ -1,7 +1,7 @@
 #ifndef HASHMAP_H
 #define HASHMAP_H
 
-#define START_SIZE 100
+#define START_SIZE 2
 #define TRUE 1
 #define FALSE 0
 #define ERROR 1
@@ -21,7 +21,7 @@ typedef struct {
     int capacity;
 } HashMap;
 
-HashMap* hashmap_create();
+HashMap* hashmap_create(int capacity);
 void hashmap_insert(HashMap* map, int key, handler_t value);
 handler_t hashmap_get(HashMap* map, int key);
 void hashmap_delete(HashMap* map, int key);
