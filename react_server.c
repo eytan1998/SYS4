@@ -1,24 +1,17 @@
 /*
 ** pollserver.c -- a cheezy multiperson chat server
+ * https://beej.us/guide/bgnet/html/#slightly-advanced-techniques
 */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <sys/socket.h>
-#include <netinet/in.h>
 #include <netdb.h>
 
 #include "reactor.h"
 
-// Get sockaddr, IPv4 or IPv6:
-void *get_in_addr(struct sockaddr *sa) {
-    if (sa->sa_family == AF_INET) {
-        return &(((struct sockaddr_in *) sa)->sin_addr);
-    }
-
-    return &(((struct sockaddr_in6 *) sa)->sin6_addr);
-}
+#define PORT "9034"   // Port we're listening on as beej
 
 // Return a listening socket
 int get_listener_socket(void) {

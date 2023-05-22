@@ -1,0 +1,40 @@
+#How to install
+    https://github.com/eytan1998/SYS4.git
+    cd SYS4
+    make all
+
+#How to run
+    to run the server with reactor just type:
+    ./react_server
+
+    one of ways to connect to server via telnet:
+    telnet localhost 9034
+    (if not on localhost, you need to change)
+
+#Program explain
+    ##react_server
+    The program start with open listener socket on port 9034(as beej).
+    Then create the reactor add the listener with accept function and start the reactor.
+    Then just wain to the reactor.
+
+    typedef struct Reactor {
+        pthread_t thread_id;
+        HashMap * p_HashMap;
+        struct pollfd *pfds;
+        int thread_active;//bool
+    } Reactor,*p_Reactor;
+
+    ##reactor
+    The reactor has thread id so can do function on the reactor thread.
+    HashMap that store fd as key and function as value
+    , the hashmap is dynamic and can grow the start size is 10.
+    Also have pfds its for the poll function to find who is "hot"
+    and "bool" to see if reactor is active.
+
+    ##the main loop
+    On activate the reactor the main tread is running.
+    we loops on thread_active:
+        do pool and get the "hot" fd
+        for each of them get the corresponding function and execute it.
+        (in this example listener get the accept_function and all other get print_function)
+

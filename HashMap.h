@@ -1,7 +1,7 @@
 #ifndef HASHMAP_H
 #define HASHMAP_H
 
-#define START_SIZE 2
+#define START_SIZE 10
 #define TRUE 1
 #define FALSE 0
 #define ERROR 1

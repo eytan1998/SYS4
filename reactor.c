@@ -1,5 +1,3 @@
-
-
 #include "reactor.h"
 
 
@@ -24,8 +22,8 @@ void accept_fun(int values, p_Reactor reactor,int listener) {
     }
 }
 
-
 void print_fun(int values, p_Reactor reactor,int fd) {
+
     char buf[256];    // ass beej
     bzero(buf,sizeof buf); // so dont get trash
 
@@ -55,24 +53,27 @@ void *main_function(void *this) {
     p_Reactor reactor = (p_Reactor) this;
 
 // Main loop
+    int current_size = reactor->p_HashMap->size;
+
     while (reactor->thread_active) {
-        int poll_count = poll(reactor->pfds, reactor->p_HashMap->size, -1);
+        int poll_count = poll(reactor->pfds, current_size, -1);
         if (poll_count == -1) {
             perror("poll");
             exit(1);
         }
         // Run through the existing connections looking for data to read
-        for (int i = 0; i < reactor->p_HashMap->size; i++) {
+        for (int i = 0; i < current_size; i++) {
             // Check if someone's ready to read
             if (reactor->pfds[i].revents & POLLIN) { // We got one!!
                 //get assign function
-                handler_t event1_handler = hashmap_get(reactor->p_HashMap, reactor->pfds[i].fd);
-                if (event1_handler != NULL) {
-                    event1_handler(2,reactor,reactor->pfds[i].fd);
+                handler_t handler = hashmap_get(reactor->p_HashMap, reactor->pfds[i].fd);
+                if (handler != NULL) {
+                    handler(2, reactor, reactor->pfds[i].fd);
                 }
             }
-        } // END for(;;)--and you thought it would never end!
-    }
+        }
+        current_size = reactor->p_HashMap->size;
+    }// END for(;;)--and you thought it would never end!
     return 0;
 }
 
@@ -88,7 +89,7 @@ void *createReactor() {
     reactor->pfds = malloc(sizeof *reactor->pfds * START_SIZE);
     reactor->thread_active = FALSE;
     return reactor;
-};
+}
 
 
 
@@ -101,7 +102,7 @@ void startReactor(void *this) {
         return;
     }
     reactor->thread_active = TRUE;
-};
+}
 
 //stop reactor if active
 void stopReactor(void *this) {
@@ -114,7 +115,7 @@ void stopReactor(void *this) {
     reactor->thread_active = FALSE;
     pthread_join(reactor->thread_id,NULL);
 
-};
+}
 
 //handler is main_function who called when fd is "hot"
 void addFd(void *this, int fd, handler_t handler) {
@@ -123,12 +124,14 @@ void addFd(void *this, int fd, handler_t handler) {
     // If we don't have room, add more space in the pfds array
     if (reactor->p_HashMap->size >= reactor->p_HashMap->capacity) {
         reactor->pfds = realloc(reactor->pfds, sizeof(*reactor->pfds) * (reactor->p_HashMap->capacity * 2));
+        if(reactor->pfds == NULL)
+            exit(ERROR);
     }
 
     (reactor->pfds)[reactor->p_HashMap->size].fd = fd;
     (reactor->pfds)[reactor->p_HashMap->size].events = POLLIN; // Check ready-to-read
     hashmap_insert(reactor->p_HashMap, fd, handler);
-};
+}
 
 void removeFd(void *this, int fd) {
     if(this == NULL)return;
@@ -138,7 +141,7 @@ void removeFd(void *this, int fd) {
     for (i = 0; i < reactor->p_HashMap->size && reactor->pfds[i].fd != fd; ++i);
     reactor->pfds[i] = reactor->pfds[reactor->p_HashMap->size-1];
     hashmap_delete(reactor->p_HashMap, fd);
-};
+}
 
 //wait on pthread_join(3) until tread of reactor will finish
 void WaitFor(void *this) {
@@ -147,7 +150,7 @@ void WaitFor(void *this) {
     p_Reactor reactor = (p_Reactor) this;
     if (!reactor->thread_active) return;
     pthread_join(reactor->thread_id, NULL);
-};
+}
 
 void freeAll(void *this){
     if(this == NULL)return;

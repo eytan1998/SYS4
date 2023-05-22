@@ -17,13 +17,12 @@
 
 #include "HashMap.h"
 
-#define PORT "9034"   // Port we're listening on as beej
 
 typedef struct Reactor {
     pthread_t thread_id;
     HashMap * p_HashMap;
     struct pollfd *pfds;
-    int thread_active;
+    int thread_active;//bool
 } Reactor,*p_Reactor;
 
 //function to assign to fds
