@@ -26,7 +26,7 @@ typedef struct Reactor {
 } Reactor,*p_Reactor;
 
 //function to assign to fds
-void print_fun(int , p_Reactor ,int );
+void chat_fun(int values, p_Reactor reactor, int fd);
 void accept_fun(int , p_Reactor ,int );
 
 //create reactor, return pointer to struct of reactor

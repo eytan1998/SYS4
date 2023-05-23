@@ -76,8 +76,6 @@ int main(void) {
     if(reactor == NULL) return ERROR;
     addFd(reactor, listener, (handler_t) accept_fun);
     startReactor(reactor);
-    printf("[+] server ready...\n");
-
     WaitFor(reactor);
 
     return 0;
